@@ -135,6 +135,7 @@ class Ui_MainWindow(object):
             os.mkdir(sorted_dir)
         
         try:
+            self.bStart.setDisabled(True)
             for file in os.listdir(working_dir):
                 if file.endswith(""):
                     dir = os.path.abspath(file)
@@ -153,7 +154,7 @@ class Ui_MainWindow(object):
                     self.tOutput.appendPlainText("Moved: "+filename+file_extension)
         finally:
             self.tOutput.appendPlainText("Done! If it didn't work please contact samhamnam!")
-            print("\a")
+            self.bStart.setDisabled(False)
     
     def open_source(self):
         webbrowser.open("https://bitbucket.org/samhamnam/sort/overview")
