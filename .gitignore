@@ -1,3 +1,6 @@
-dist/
-build/
-__pycache__
+*
+!.gitingore
+!sort_cli.py
+!sort.py
+!sort_gui.py
+!README.md

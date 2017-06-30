@@ -25,3 +25,5 @@ def start_ex():
     temp_work = input("Enter folder with the files:\n")
     temp_sort = input("Enter folder where the goods shall be held:\n")
     start(temp_work,temp_sort)
+
+print(len(os.listdir("sorted")))
