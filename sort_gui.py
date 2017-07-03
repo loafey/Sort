@@ -1,12 +1,12 @@
 # -*- coding: latin-1 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
-#
-# Created by: PyQt5 UI code generator 5.8.1
-#
-# WARNING! All changes made in this file will be lost!
+    # Form implementation generated from reading ui file 'mainwindow.ui'
+    #
+    # Created by: PyQt5 UI code generator 5.8.1
+    #
+    # WARNING! All changes made in this file will be lost!
 
-#Created by samhamnam
+    #Created by samhamnam
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.bCopy_Move.setText("Copy instead of move")
         self.bCopy_Move.clicked.connect(self.Copy_Move)
         self.bCopy_Move.setToolTip("Not added yet due to permission errors!")
-        self.bCopy_Move.setDisabled(True)
+        self.bCopy_Move.setDisabled(False)
 
         self.bSourceCode = QtWidgets.QPushButton(self.centralwidget)
         self.bSourceCode.setGeometry(QtCore.QRect(260,240,51,18))
@@ -149,8 +149,10 @@ class Ui_MainWindow(object):
                     if self.move_mode == True:
                         shutil.move(working_dir+"/"+file,sorted_dir+"/"+file_extension)
                     if self.move_mode == False:
-                        shutil.copy(working_dir+"/"+file+"/",sorted_dir+"/"+file_extension+"/")
-                        
+                        if os.path.isdir(working_dir+"/"+file):
+                            shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file_extension+file)
+                        else:
+                            shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file_extension+"/"+file)
                     self.tOutput.appendPlainText("Moved: "+filename+file_extension)
         finally:
             self.tOutput.appendPlainText("Done! If it didn't work please contact samhamnam!")
