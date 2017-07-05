@@ -18,6 +18,7 @@ import webbrowser
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.move_mode = True
+        self.abc_mode = False
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(311, 242)
         MainWindow.setFixedHeight(257)#240
@@ -62,12 +63,17 @@ class Ui_MainWindow(object):
         self.tOutput.setReadOnly(True)
 
         self.bCopy_Move = QtWidgets.QCheckBox(self.centralwidget)
-        self.bCopy_Move.setGeometry(QtCore.QRect(2, 237, 128, 23))
+        self.bCopy_Move.setGeometry(QtCore.QRect(132, 237, 128, 23))
         self.bCopy_Move.setObjectName("Check")
         self.bCopy_Move.setText("Copy instead of move")
         self.bCopy_Move.clicked.connect(self.Copy_Move)
-        self.bCopy_Move.setToolTip("Not added yet due to permission errors!")
-        self.bCopy_Move.setDisabled(False)
+        self.bCopy_Move.setDisabled(True)
+
+        self.bABC_Move = QtWidgets.QCheckBox(self.centralwidget)
+        self.bABC_Move.setGeometry(QtCore.QRect(2,237,128,23))
+        self.bABC_Move.setObjectName("ABC")
+        self.bABC_Move.clicked.connect(self.dAbc_mode)
+        self.bABC_Move.setText("Sort by letters instead")
 
         self.bSourceCode = QtWidgets.QPushButton(self.centralwidget)
         self.bSourceCode.setGeometry(QtCore.QRect(260,240,51,18))
@@ -141,19 +147,36 @@ class Ui_MainWindow(object):
                     dir = os.path.abspath(file)
                     self.tOutput.moveCursor(QtGui.QTextCursor.End)
                     filename, file_extension = os.path.splitext(file)
-                    if os.path.isdir(sorted_dir+"/"+file_extension) == False:
-                        if len(file_extension) > 0:
-                            self.tOutput.appendPlainText("Created directory: "+file_extension)
-                            self.tOutput.moveCursor(QtGui.QTextCursor.End)
-                            os.mkdir(sorted_dir+"/"+file_extension)
-                    if self.move_mode == True:
-                        shutil.move(working_dir+"/"+file,sorted_dir+"/"+file_extension)
-                    if self.move_mode == False:
-                        if os.path.isdir(working_dir+"/"+file):
-                            shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file_extension+file)
-                        else:
-                            shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file_extension+"/"+file)
-                    self.tOutput.appendPlainText("Moved: "+filename+file_extension)
+                    if self.abc_mode == False:
+                        if os.path.isdir(sorted_dir+"/"+file_extension) == False:
+                            if len(file_extension) > 0:
+                                self.tOutput.appendPlainText("Created directory: "+file_extension)
+                                self.tOutput.moveCursor(QtGui.QTextCursor.End)
+                                os.mkdir(sorted_dir+"/"+file_extension)
+                    else:
+                        if os.path.isdir(sorted_dir+"/"+file[:1]) == False:
+                            if len(file_extension) > 0:
+                                self.tOutput.appendPlainText("Created directory: "+file[:1])
+                                self.tOutput.moveCursor(QtGui.QTextCursor.End)
+                                os.mkdir(sorted_dir+"/"+file[:1])
+                    
+                    if self.abc_mode == False:
+                        if self.move_mode == True:
+                            shutil.move(working_dir+"/"+file,sorted_dir+"/"+file_extension)
+                        if self.move_mode == False:
+                            if os.path.isdir(working_dir+"/"+file):
+                                shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file_extension+file)
+                            else:
+                                shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file_extension+"/"+file)
+                    else:
+                        if self.move_mode == True:
+                            shutil.move(working_dir+"/"+file,sorted_dir+"/"+file[:1]+"/"+file)
+                        if self.move_mode == False:
+                            if os.path.isdir(working_dir+"/"+file):
+                                shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file[:1]+"/")
+                            else:
+                                shutil.copytree(working_dir+"/"+file,sorted_dir+"/"+file[:1]+"/")
+                    #self.tOutput.appendPlainText("Moved: "+filename+file_extension)
         finally:
             self.tOutput.appendPlainText("Done! If it didn't work please contact samhamnam!")
             self.bStart.setDisabled(False)
@@ -163,11 +186,19 @@ class Ui_MainWindow(object):
 
     def Copy_Move(self):
         if self.bCopy_Move.isChecked() ==True:
-            self.move_mode = False
-            print(self.move_mode)
-        else:
             self.move_mode = True
             print(self.move_mode)
+        else:
+            self.move_mode = False
+            print(self.move_mode)
+   
+    def dAbc_mode(self):
+        if self.bABC_Move.isChecked() == True:
+            self.abc_mode = True
+            print(self.abc_mode)
+        else:
+            self.abc_mode = False
+            print(self.abc_mode)
 
 if __name__ == "__main__":
     import sys
